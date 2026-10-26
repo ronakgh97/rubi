@@ -28,69 +28,69 @@ pub struct Move {
 
 impl Move {
     #[allow(non_snake_case)]
-    pub const fn R() -> Self {
-        Move {
-            // corners: cycle URF -> UBR -> DRB -> DFR -> URF
+    pub const fn F() -> Self {
+        Self {
+            // corners: cycle URF -> DFR -> DLF -> UFL -> URF
             corner_from: [
-                Corner::DFR as u8, // URF <- DFR
-                Corner::UFL as u8,
+                Corner::UFL as u8, // URF <- UFL
+                Corner::DLF as u8, // UFL <- DLF
                 Corner::ULB as u8,
-                Corner::URF as u8, // UBR <- URF
-                Corner::DRB as u8, // DFR <- DRB
-                Corner::DLF as u8,
+                Corner::UBR as u8,
+                Corner::URF as u8, // DFR <- URF
+                Corner::DFR as u8, // DLF <- DFR
                 Corner::DBL as u8,
-                Corner::UBR as u8, // DRB <- UBR
+                Corner::DRB as u8,
             ],
-            corner_delta: [2, 0, 0, 1, 1, 0, 0, 2],
-            // edges: cycle UR -> BR -> DR -> FR -> UR
+            corner_delta: [1, 2, 0, 0, 2, 1, 0, 0],
+            // edges: cycle UF -> FR -> DF -> FL -> UF
             edge_from: [
-                Edge::FR as u8, // UR <- FR
-                Edge::UF as u8,
+                Edge::UR as u8,
+                Edge::FL as u8, // UF <- FL
                 Edge::UL as u8,
                 Edge::UB as u8,
-                Edge::BR as u8, // DR <- BR
-                Edge::DF as u8,
+                Edge::DR as u8,
+                Edge::FR as u8, // DF <- FR
                 Edge::DL as u8,
                 Edge::DB as u8,
-                Edge::DR as u8, // FR <- DR
-                Edge::FL as u8,
+                Edge::UF as u8, // FR <- UF
+                Edge::DF as u8, // FL <- DF
                 Edge::BL as u8,
-                Edge::UR as u8, // BR <- UR
+                Edge::BR as u8,
             ],
-            edge_delta: [0; 12],
+            edge_delta: [0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
         }
     }
     #[allow(non_snake_case)]
-    pub const fn L() -> Self {
+    pub const fn B() -> Self {
         Self {
-            // corners: cycle UFL -> DLF -> DBL -> ULB -> UFL
+            // corners: cycle UBR -> ULB -> DBL -> DRB -> UBR
             corner_from: [
                 Corner::URF as u8,
-                Corner::ULB as u8, // UFL <- ULB
-                Corner::DBL as u8, // ULB <- DBL
-                Corner::UBR as u8,
+                Corner::UFL as u8,
+                Corner::UBR as u8, // ULB <- UBR
+                Corner::DRB as u8, // UBR <- DRB
                 Corner::DFR as u8,
-                Corner::UFL as u8, // DLF <- UFL
-                Corner::DLF as u8, // DBL <- DLF
-                Corner::DRB as u8,
+                Corner::DLF as u8,
+                Corner::ULB as u8, // DBL <- ULB
+                Corner::DBL as u8, // DRB <- DBL
             ],
-            corner_delta: [0, 1, 2, 0, 0, 2, 1, 0],
-            // edges: cycle UL -> FL -> DL -> BL -> UL
+            corner_delta: [0, 0, 1, 2, 0, 0, 2, 1],
+            // edges: cycle UB -> BL -> DB -> BR -> UB
             edge_from: [
                 Edge::UR as u8,
                 Edge::UF as u8,
-                Edge::BL as u8, // UL <- BL
-                Edge::UB as u8,
+                Edge::UL as u8,
+                Edge::BR as u8, // UB <- BR
                 Edge::DR as u8,
                 Edge::DF as u8,
-                Edge::FL as u8, // DL <- FL
-                Edge::DB as u8,
+                Edge::DL as u8,
+                Edge::BL as u8, // DB <- BL
                 Edge::FR as u8,
-                Edge::UL as u8, // FL <- UL
-                Edge::DL as u8, // BL <- DL
-                Edge::BR as u8,
+                Edge::FL as u8,
+                Edge::UB as u8, // BL <- UB
+                Edge::DB as u8, // BR <- DB
             ],
-            edge_delta: [0; 12],
+            edge_delta: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
         }
     }
     #[allow(non_snake_case)]
@@ -160,69 +160,69 @@ impl Move {
         }
     }
     #[allow(non_snake_case)]
-    pub const fn F() -> Self {
+    pub const fn L() -> Self {
         Self {
-            // corners: cycle URF -> DFR -> DLF -> UFL -> URF
-            corner_from: [
-                Corner::UFL as u8, // URF <- UFL
-                Corner::DLF as u8, // UFL <- DLF
-                Corner::ULB as u8,
-                Corner::UBR as u8,
-                Corner::URF as u8, // DFR <- URF
-                Corner::DFR as u8, // DLF <- DFR
-                Corner::DBL as u8,
-                Corner::DRB as u8,
-            ],
-            corner_delta: [1, 2, 0, 0, 2, 1, 0, 0],
-            // edges: cycle UF -> FR -> DF -> FL -> UF
-            edge_from: [
-                Edge::UR as u8,
-                Edge::FL as u8, // UF <- FL
-                Edge::UL as u8,
-                Edge::UB as u8,
-                Edge::DR as u8,
-                Edge::FR as u8, // DF <- FR
-                Edge::DL as u8,
-                Edge::DB as u8,
-                Edge::UF as u8, // FR <- UF
-                Edge::DF as u8, // FL <- DF
-                Edge::BL as u8,
-                Edge::BR as u8,
-            ],
-            edge_delta: [0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
-        }
-    }
-    #[allow(non_snake_case)]
-    pub const fn B() -> Self {
-        Self {
-            // corners: cycle UBR -> ULB -> DBL -> DRB -> UBR
+            // corners: cycle UFL -> DLF -> DBL -> ULB -> UFL
             corner_from: [
                 Corner::URF as u8,
-                Corner::UFL as u8,
-                Corner::UBR as u8, // ULB <- UBR
-                Corner::DRB as u8, // UBR <- DRB
+                Corner::ULB as u8, // UFL <- ULB
+                Corner::DBL as u8, // ULB <- DBL
+                Corner::UBR as u8,
                 Corner::DFR as u8,
-                Corner::DLF as u8,
-                Corner::ULB as u8, // DBL <- ULB
-                Corner::DBL as u8, // DRB <- DBL
+                Corner::UFL as u8, // DLF <- UFL
+                Corner::DLF as u8, // DBL <- DLF
+                Corner::DRB as u8,
             ],
-            corner_delta: [0, 0, 1, 2, 0, 0, 2, 1],
-            // edges: cycle UB -> BL -> DB -> BR -> UB
+            corner_delta: [0, 1, 2, 0, 0, 2, 1, 0],
+            // edges: cycle UL -> FL -> DL -> BL -> UL
             edge_from: [
                 Edge::UR as u8,
                 Edge::UF as u8,
-                Edge::UL as u8,
-                Edge::BR as u8, // UB <- BR
+                Edge::BL as u8, // UL <- BL
+                Edge::UB as u8,
                 Edge::DR as u8,
                 Edge::DF as u8,
-                Edge::DL as u8,
-                Edge::BL as u8, // DB <- BL
+                Edge::FL as u8, // DL <- FL
+                Edge::DB as u8,
                 Edge::FR as u8,
-                Edge::FL as u8,
-                Edge::UB as u8, // BL <- UB
-                Edge::DB as u8, // BR <- DB
+                Edge::UL as u8, // FL <- UL
+                Edge::DL as u8, // BL <- DL
+                Edge::BR as u8,
             ],
-            edge_delta: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
+            edge_delta: [0; 12],
+        }
+    }
+    #[allow(non_snake_case)]
+    pub const fn R() -> Self {
+        Move {
+            // corners: cycle URF -> UBR -> DRB -> DFR -> URF
+            corner_from: [
+                Corner::DFR as u8, // URF <- DFR
+                Corner::UFL as u8,
+                Corner::ULB as u8,
+                Corner::URF as u8, // UBR <- URF
+                Corner::DRB as u8, // DFR <- DRB
+                Corner::DLF as u8,
+                Corner::DBL as u8,
+                Corner::UBR as u8, // DRB <- UBR
+            ],
+            corner_delta: [2, 0, 0, 1, 1, 0, 0, 2],
+            // edges: cycle UR -> BR -> DR -> FR -> UR
+            edge_from: [
+                Edge::FR as u8, // UR <- FR
+                Edge::UF as u8,
+                Edge::UL as u8,
+                Edge::UB as u8,
+                Edge::BR as u8, // DR <- BR
+                Edge::DF as u8,
+                Edge::DL as u8,
+                Edge::DB as u8,
+                Edge::DR as u8, // FR <- DR
+                Edge::FL as u8,
+                Edge::BL as u8,
+                Edge::UR as u8, // BR <- UR
+            ],
+            edge_delta: [0; 12],
         }
     }
     #[inline]

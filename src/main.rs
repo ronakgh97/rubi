@@ -1,5 +1,8 @@
 pub mod moves;
+pub mod solver;
+
 use crate::moves::Move;
+use std::fmt::Display;
 
 fn main() {
     let mut cube = Cube::default();
@@ -56,10 +59,10 @@ fn main() {
 
     println!(
         "Is cube valid after scrambled? {}",
-        cube.is_corner_valid()
-            && cube.is_edge_valid()
+        (cube.is_edge_valid() == cube.is_corner_valid())
             && (cube.corner_parity() == cube.edge_parity())
     );
+    println!("Cube state after scramble:\n{}", cube);
 }
 
 #[repr(C)]
@@ -80,6 +83,53 @@ impl Default for Cube {
             edge_permutation: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
             edge_orientation: [0; 12],
         }
+    }
+}
+
+impl Display for Cube {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let front_face = [
+            self.edge_permutation[1],
+            self.edge_permutation[8],
+            self.edge_permutation[5],
+            self.edge_permutation[9],
+        ];
+        let back_face = [
+            self.edge_permutation[3],
+            self.edge_permutation[10],
+            self.edge_permutation[7],
+            self.edge_permutation[11],
+        ];
+        let up_face = [
+            self.edge_permutation[0],
+            self.edge_permutation[1],
+            self.edge_permutation[2],
+            self.edge_permutation[3],
+        ];
+        let down_face = [
+            self.edge_permutation[4],
+            self.edge_permutation[5],
+            self.edge_permutation[6],
+            self.edge_permutation[7],
+        ];
+        let left_face = [
+            self.edge_permutation[2],
+            self.edge_permutation[9],
+            self.edge_permutation[6],
+            self.edge_permutation[10],
+        ];
+        let right_face = [
+            self.edge_permutation[0],
+            self.edge_permutation[7],
+            self.edge_permutation[4],
+            self.edge_permutation[11],
+        ];
+        // TODO; add colors somehow maybe
+        write!(
+            f,
+            "Front face: {:?}\nBack face: {:?}\nUp face: {:?}\nDown face: {:?}\nLeft face: {:?}\nRight face: {:?}",
+            front_face, back_face, up_face, down_face, left_face, right_face
+        )
     }
 }
 
