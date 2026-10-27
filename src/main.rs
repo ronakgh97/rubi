@@ -6,6 +6,7 @@ use crate::moves::Move;
 
 fn main() {
     let mut cube = Cube::default();
+    assert!(cube.is_solved());
 
     // scramble the cube with random moves
     for _ in 0..443665 {
@@ -15,42 +16,42 @@ fn main() {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::B());
                 } else {
-                    cube.apply_move(Move::B().prime());
+                    cube.apply_move(Move::B().PRIME());
                 }
             }
             2 => {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::U());
                 } else {
-                    cube.apply_move(Move::U().prime());
+                    cube.apply_move(Move::U().PRIME());
                 }
             }
             3 => {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::L());
                 } else {
-                    cube.apply_move(Move::L().prime());
+                    cube.apply_move(Move::L().PRIME());
                 }
             }
             4 => {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::R());
                 } else {
-                    cube.apply_move(Move::R().prime());
+                    cube.apply_move(Move::R().PRIME());
                 }
             }
             5 => {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::F());
                 } else {
-                    cube.apply_move(Move::F().prime());
+                    cube.apply_move(Move::F().PRIME());
                 }
             }
             6 => {
                 if rand::random_bool(0.5) {
                     cube.apply_move(Move::D());
                 } else {
-                    cube.apply_move(Move::D().prime());
+                    cube.apply_move(Move::D().PRIME());
                 }
             }
             _ => {}
@@ -67,7 +68,7 @@ fn main() {
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-struct Cube {
+pub struct Cube {
     corner_permutation: [u8; 8],
     corner_orientation: [u8; 8],
     edge_permutation: [u8; 12],
@@ -88,7 +89,7 @@ impl Default for Cube {
 
 impl Cube {
     #[inline(always)]
-    fn apply_move(&mut self, r#move: Move) {
+    pub fn apply_move(&mut self, r#move: Move) {
         // get old state
         let old_cp = self.corner_permutation;
         let old_co = self.corner_orientation;
@@ -109,6 +110,12 @@ impl Cube {
             self.edge_permutation[i] = old_ep[from];
             self.edge_orientation[i] = (old_eo[from] + r#move.edge_delta[i]) % 2;
         }
+    }
+
+    #[inline(always)]
+    fn is_solved(&self) -> bool {
+        let cube = Cube::default();
+        self == &cube
     }
 
     #[inline]

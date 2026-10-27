@@ -225,34 +225,80 @@ impl Move {
             edge_delta: [0; 12],
         }
     }
-    #[inline]
-    pub fn prime(self) -> Self {
+    #[allow(non_snake_case)]
+    pub const fn PRIME(self) -> Self {
         let mut inverse = self;
-        for i in 0..8 {
+        let mut i = 0;
+
+        while i < 8 {
             let from = self.corner_from[i] as usize;
             inverse.corner_from[from] = i as u8;
             inverse.corner_delta[from] = (3 - self.corner_delta[i]) % 3;
+            i += 1;
         }
-        for i in 0..12 {
+
+        i = 0;
+        while i < 12 {
             let from = self.edge_from[i] as usize;
             inverse.edge_from[from] = i as u8;
             inverse.edge_delta[from] = (2 - self.edge_delta[i]) % 2;
+            i += 1;
         }
+
         inverse
     }
-    #[inline]
-    pub fn double(self) -> Self {
+    #[allow(non_snake_case)]
+    pub const fn DOUBLE(self) -> Self {
         let mut double = self;
-        for i in 0..8 {
+        let mut i = 0;
+
+        while i < 8 {
             let from = self.corner_from[i] as usize;
             double.corner_from[i] = self.corner_from[from];
             double.corner_delta[i] = (self.corner_delta[from] + self.corner_delta[i]) % 3;
+            i += 1;
         }
-        for i in 0..12 {
+
+        i = 0;
+        while i < 12 {
             let from = self.edge_from[i] as usize;
             double.edge_from[i] = self.edge_from[from];
             double.edge_delta[i] = (self.edge_delta[from] + self.edge_delta[i]) % 2;
+            i += 1;
         }
+
         double
     }
+}
+
+#[allow(non_snake_case)]
+/// Format: U, U', U2, D, D', D2, L, L', L2, R, R', R2, F, F', F2, B, B', B2
+pub const fn ALL_MOVES() -> [Move; 18] {
+    let f = Move::F();
+    let b = Move::B();
+    let u = Move::U();
+    let d = Move::D();
+    let l = Move::L();
+    let r = Move::R();
+
+    [
+        u,
+        u.PRIME(),
+        u.DOUBLE(),
+        d,
+        d.PRIME(),
+        d.DOUBLE(),
+        l,
+        l.PRIME(),
+        l.DOUBLE(),
+        r,
+        r.PRIME(),
+        r.DOUBLE(),
+        f,
+        f.PRIME(),
+        f.DOUBLE(),
+        b,
+        b.PRIME(),
+        b.DOUBLE(),
+    ]
 }
