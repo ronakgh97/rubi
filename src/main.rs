@@ -3,14 +3,17 @@ pub mod moves;
 pub mod solver;
 
 use crate::moves::Move;
+use crate::solver::Solver;
 
 fn main() {
     let mut cube = Cube::default();
     assert!(cube.is_solved());
+    assert_eq!(Cube::evaluate(&cube), 1.0);
 
     // scramble the cube with random moves
-    for _ in 0..443665 {
-        let rand = rand::random_range(0..6);
+    let scramble_moves = 22u32;
+    for _ in 0..scramble_moves {
+        let rand = rand::random_range(1u8..=6);
         match rand {
             1 => {
                 if rand::random_bool(0.5) {
@@ -58,12 +61,47 @@ fn main() {
         }
     }
 
-    println!(
-        "Is cube valid after scrambled? {}",
+    assert!(
         (cube.is_edge_valid() == cube.is_corner_valid())
-            && (cube.corner_parity() == cube.edge_parity())
+            && (cube.corner_parity() == cube.edge_parity()),
+        "Cube not valid after {} scrambles: {}",
+        scramble_moves,
+        cube
     );
+
+    let max_depth = 18;
     println!("Cube state after scramble:\n{}", cube);
+    println!("Solving with max depth {}", max_depth);
+    let cube_copy = cube;
+    let start = std::time::Instant::now();
+    let result = Solver::init(cube_copy, max_depth).solve();
+    match result.solution {
+        Some(solution) => {
+            println!(
+                "Solution found in {} moves, node searched: {}",
+                solution.len(),
+                result.nodes_searched
+            );
+            println!("Time taken: {:?}", start.elapsed());
+            for m in &solution {
+                print!("{} ", m);
+            }
+            println!();
+            for m in &solution {
+                cube.apply_move(*m);
+            }
+            assert!(
+                (cube.is_edge_valid() == cube.is_corner_valid())
+                    && (cube.corner_parity() == cube.edge_parity()),
+                "Cube not valid after solution: {}",
+                scramble_moves,
+            );
+            println!("Cube state after solution:\n{}", cube);
+        }
+        None => {
+            println!("No solution found within {} moves.", max_depth);
+        }
+    }
 }
 
 #[repr(C)]
@@ -116,6 +154,27 @@ impl Cube {
     fn is_solved(&self) -> bool {
         let cube = Cube::default();
         self == &cube
+    }
+
+    #[inline(always)]
+    fn evaluate(cube: &Cube) -> f32 {
+        let mut correct_cubies = 0u32;
+
+        // check corners for their correct position and orientation
+        for i in 0..8 {
+            if cube.corner_permutation[i] == i as u8 && cube.corner_orientation[i] == 0 {
+                correct_cubies += 1;
+            }
+        }
+
+        // check edge similarly
+        for i in 0..12 {
+            if cube.edge_permutation[i] == i as u8 && cube.edge_orientation[i] == 0 {
+                correct_cubies += 1;
+            }
+        }
+
+        correct_cubies as f32 / 20.0 // 0..1
     }
 
     #[inline]
