@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[rustfmt::skip]
@@ -24,6 +26,21 @@ pub struct Move {
     pub corner_delta: [u8; 8],
     pub edge_from: [u8; 12],
     pub edge_delta: [u8; 12],
+}
+
+impl Display for Move {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let moves = ALL_MOVES();
+        if let Some(index) = moves.iter().position(|m| m == self) {
+            let move_names = [
+                "U", "U'", "U2", "D", "D'", "D2", "L", "L'", "L2", "R", "R'", "R2", "F", "F'",
+                "F2", "B", "B'", "B2",
+            ];
+            write!(f, "{}", move_names[index])
+        } else {
+            write!(f, "<unknown invalid move>")
+        }
+    }
 }
 
 impl Move {

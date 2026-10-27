@@ -56,11 +56,11 @@ impl Display for Cube {
         let mut faces = [[U; 9], [R; 9], [F; 9], [D; 9], [L; 9], [B; 9]];
 
         // place each corner's three stickers, with their twists
-        for position in 0..8 {
+        for (position, _) in CORNER_FACELETS.iter().enumerate() {
             let piece = self.corner_permutation[position] as usize;
             let twist = self.corner_orientation[position] as usize;
 
-            for sticker in 0..3 {
+            for (sticker, _) in CORNER_FACELETS.iter().enumerate().take(3) {
                 let destination = (sticker + twist) % 3;
 
                 let (face, cell) = CORNER_FACELETS[position][destination];
@@ -71,11 +71,11 @@ impl Display for Cube {
         }
 
         // place each edge's two stickers, with their flips
-        for position in 0..12 {
+        for (position, _) in EDGE_FACELETS.iter().enumerate() {
             let piece = self.edge_permutation[position] as usize;
             let flip = self.edge_orientation[position] as usize;
 
-            for sticker in 0..2 {
+            for (sticker, _) in EDGE_FACELETS.iter().enumerate().take(2) {
                 let destination = (sticker + flip) % 2;
 
                 let (face, cell) = EDGE_FACELETS[position][destination];
@@ -112,11 +112,13 @@ impl Display for Cube {
         //       L   F   R   B
         //           D
         writeln!(f, "               U")?;
+        #[allow(clippy::needless_range_loop)]
         for row in 0..3 {
             writeln!(f, "           {}", face_rows[U][row])?;
         }
 
         writeln!(f, "\n    L          F          R          B")?;
+        #[allow(clippy::needless_range_loop)]
         for row in 0..3 {
             writeln!(
                 f,
@@ -126,6 +128,7 @@ impl Display for Cube {
         }
 
         writeln!(f, "\n               D")?;
+        #[allow(clippy::needless_range_loop)]
         for row in 0..3 {
             write!(f, "           {}", face_rows[D][row])?;
 
